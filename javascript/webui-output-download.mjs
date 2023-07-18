@@ -60,7 +60,7 @@ const onProcessCompleted = async (files, info) => {
     }
 }
 
-const createFilename = (url, extname=extname(url)) => {
+const createFilename = (url) => {
     const date = new Date()
     const dateText = date.getFullYear().toString().padStart(4, '0') +
         [
@@ -74,7 +74,7 @@ const createFilename = (url, extname=extname(url)) => {
             date.getSeconds(),
         ].map((num) => num.toString().padStart(2, '0')).join('')
     
-    return [dateText, timeText, [basename(url), extname].join('.')].join("_")
+    return [dateText, timeText, basename(url)].join("_")
 }
 
 const basename = (url) => {
