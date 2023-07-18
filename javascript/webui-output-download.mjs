@@ -80,9 +80,6 @@ const createFilename = (url, extname=extname(url)) => {
 const basename = (url) => {
     return url.split("/").pop().split('.').shift()
 }
-const extname = (url) => {
-    return url.split("/").pop().split('.').pop()
-}
 
 const register = async() => {
     if (!directoryHandle) {
@@ -155,18 +152,18 @@ const addUI = () => {
     container.style.right = 0
     container.style.top = 0
 
-    const button = document.createElement('button')
+    const startButton = document.createElement('button')
     const updateButton = () => {
         if (directoryHandle) {
-            button.textContent = "🚫"
-            button.title = "クリックすると出力の保存を停止します"
+            startButton.textContent = "🚫"
+            startButton.title = "クリックすると出力の保存を停止します"
         } else {
-            button.textContent = "⬇"
-            button.title = "クリックすると次回Generateから出力の保存を行います"
+            startButton.textContent = "⬇"
+            startButton.title = "クリックすると次回Generateから出力の保存を行います"
         }
     }
     updateButton()
-    button.addEventListener("click", async (ev) => {
+    startButton.addEventListener("click", async (ev) => {
         if (directoryHandle) {
             await unregister()
         } else {
@@ -175,19 +172,18 @@ const addUI = () => {
         updateButton()
     })
 
-    container.appendChild(button)
+    container.appendChild(startButton)
 
-    const button2 = document.createElement('button')
-    button2.textContent = "🔜"
-    button2.addEventListener("click", async (ev) => {
-        if (!directoryHandle) {
-            await getHandle()
-        }
+    const downloadButton = document.createElement('button')
+    downloadButton.textContent = "🔜"
+    downloadButton.addEventListener("click", async (ev) => {
+        const a = document.createElement('a')
         const url = "/webui_output_download_outputs"
-        const zip = await fetch(url).then(res => res.blob())
-        writeFile(createFilename(url, "zip"), zip)
+        a.href = url
+        a.download = ""
+        a.click()
     })
-    container.appendChild(button2)
+    container.appendChild(downloadButton)
 
 
     document.body.appendChild(container)
