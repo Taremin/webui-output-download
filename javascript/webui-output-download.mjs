@@ -60,21 +60,28 @@ const onProcessCompleted = async (files, info) => {
     }
 }
 
-const createFilename = (url) => {
+const createFilename = (url, extname=extname(url)) => {
     const date = new Date()
     const dateText = date.getFullYear().toString().padStart(4, '0') +
         [
             (date.getMonth() + 1),
             date.getDate(),
+        ].map((num) => num.toString().padStart(2, '0')).join('')
+    const timeText =
+        [
             date.getHours(),
-            date.getMinutes()
+            date.getMinutes(),
+            date.getSeconds(),
         ].map((num) => num.toString().padStart(2, '0')).join('')
     
-    return [dateText, basename(url)].join("_")
+    return [dateText, timeText, [basename(url), extname].join('.')].join("_")
 }
 
 const basename = (url) => {
-    return url.split("/").pop()
+    return url.split("/").pop().split('.').shift()
+}
+const extname = (url) => {
+    return url.split("/").pop().split('.').pop()
 }
 
 const register = async() => {
@@ -101,6 +108,8 @@ const getHandle = async () => {
         Object.assign(dirOption, {startIn: dir})
     }
     directoryHandle = await window.showDirectoryPicker(dirOption)
+
+    return directoryHandle
 }
 
 const isExists = async (filename) => {
@@ -167,6 +176,19 @@ const addUI = () => {
     })
 
     container.appendChild(button)
+
+    const button2 = document.createElement('button')
+    button2.textContent = "🔜"
+    button2.addEventListener("click", async (ev) => {
+        if (!directoryHandle) {
+            await getHandle()
+        }
+        const url = "/webui_output_download_outputs"
+        const zip = await fetch(url).then(res => res.blob())
+        writeFile(createFilename(url, "zip"), zip)
+    })
+    container.appendChild(button2)
+
 
     document.body.appendChild(container)
 }
