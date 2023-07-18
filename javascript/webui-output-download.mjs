@@ -78,7 +78,7 @@ const createFilename = (url) => {
 }
 
 const basename = (url) => {
-    return url.split("/").pop().split('.').shift()
+    return url.split("/").pop()
 }
 
 const register = async() => {
